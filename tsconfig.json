@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "sourceMap": true,
+    "target": "ES2017",
+    "outDir": "build",
+    "rootDir": "./",
+    "baseUrl": "./",
+    "typeRoots": ["./types"]
+  },
+  "include": ["src/**/*.ts", "./types.d.ts"],
+  "exclude": ["node_modules", "build"]
+}

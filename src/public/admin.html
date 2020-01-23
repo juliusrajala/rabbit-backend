@@ -1,0 +1,198 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes"
+    />
+    <title>Jäniksen admin-paneeli</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito|Source+Code+Pro&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Source Code Pro', monospace;
+      }
+
+      h2 {
+        padding: 10px 30px;
+      }
+      body {
+        height: 100vh;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        overflow: hidden;
+      }
+      .page {
+        display: flex;
+        flex-direction: row;
+        padding: 20px;
+        background: #000;
+        color: #fff;
+        flex: 1;
+        height: 100%;
+      }
+
+      .page > * {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex: 1;
+        padding: 10px;
+      }
+      #form {
+        background: #303952;
+        height: 50%;
+        display: block;
+        padding: 10px 30px;
+        border-radius: 5px;
+        flex: 1;
+      }
+
+      #products {
+        height: 50%;
+        font-size: 25px;
+        background: #303952;
+        display: block;
+        flex: 1;
+        padding: 10px 30px;
+        border-radius: 5px;
+        height: 50%;
+      }
+
+      #products > span {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 10px;
+      }
+
+      #products > span > span {
+        font-family: 'Source Code Pro', monospace;
+        display: flex;
+        margin-right: 20px;
+      }
+
+      .input-container,
+      .button-container {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        margin-bottom: 20px;
+      }
+
+      .input-container > input {
+        width: 100%;
+        font-size: 20px;
+        border-radius: 2px;
+        border: none;
+      }
+
+      .input-container > label {
+        padding-bottom: 5px;
+        text-transform: uppercase;
+        outline: none;
+      }
+
+      #submit-button {
+        padding: 10px;
+        background: transparent;
+        border: 2px solid white;
+        color: whitE;
+        font-size: 20px;
+      }
+
+      #submit-button:hover {
+        background: #fff;
+        color: #303952;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="left">
+        <h2>Myynnissä olevat tuotteet</h2>
+        <code id="products"></code>
+      </div>
+      <div class="right">
+        <h2>Lisää uusi tuote</h2>
+        <form id="form">
+          <div class="input-container">
+            <label for="name">Nimi</label>
+            <input id="name" type="string" />
+          </div>
+          <div class="input-container">
+            <label for="price">Hinta</label>
+            <input id="price" type="number" />
+          </div>
+          <div class="button-container">
+            <button id="submit-button">Lisää</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+      const $products = document.querySelector('#products');
+      const $submit = document.querySelector('#submit-button');
+      const $form = document.querySelector('#form');
+
+      const $priceField = document.querySelector('#price');
+      const $nameField = document.querySelector('#name');
+      const fetchProducts = () => {
+        fetch('products')
+          .then(results => results.json())
+          .then(results => {
+            console.log('Results', results);
+            results.map(item => {
+              const $container = document.createElement('span');
+              const $name = document.createElement('span');
+              const name = document.createTextNode(item.product_name);
+              $name.appendChild(name);
+              const $price = document.createElement('span');
+              const price = document.createTextNode(item.price + '€');
+              $price.appendChild(price);
+              $container.appendChild($name);
+              $container.appendChild($price);
+              const span = $products.appendChild($container);
+            });
+          });
+      };
+
+      const submitData = event => {
+        event.preventDefault();
+        event.stopPropagation();
+        const price = parseFloat($priceField.value);
+        const name = $nameField.value;
+        console.log(price, name);
+        if (!price || typeof price !== 'number') {
+          return alert('Varmistathan että hinta on numeromuodoissa euroina.');
+        }
+        if (!name || name.length < 3) {
+          return alert(
+            'Tuotteella pitää olla nimi ja sen pitää olla yli kolme kirjainta.'
+          );
+        }
+        return fetch('products/create', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            price,
+            product_name: name
+          })
+        });
+      };
+
+      $form.addEventListener('submit', submitData);
+      $submit.addEventListener('click', submitData);
+      fetchProducts();
+    </script>
+  </body>
+</html>
