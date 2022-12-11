@@ -18,7 +18,7 @@
     "cross-env": "^6.0.3",
     "cuid": "^2.1.8",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-promise-router": "^3.0.3",
     "nodemon": "^2.0.2",
     "path": "^0.12.7",
